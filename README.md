@@ -1,8 +1,8 @@
 # 30dc
 30 days challenge one !
 
-### frontend template by:- https://github.com/estevanmaito/windmill-dashboard  
-### founded on https://www.tailwindawesome.com/  
+#### frontend template by:- https://github.com/estevanmaito/windmill-dashboard  
+#### founded on https://www.tailwindawesome.com/  
 
 ## read requirements.txt for python package requirements
 
@@ -40,5 +40,16 @@ CREATE TABLE users (
 ```
 
 In help.txt you can find my thinking on how i imagined the project would work,
-and over time how I imagined the layout of my project, 
+and over time how I imagined the layout of my project,  
 like a blueprint that changes as the idea is shaped by continuous efforts over time.
+
+also created virtual env so that i can isolate my working environment 
+from my global environment.
+
+```
+python3.10 -m venv "chefenv"
+```
+
+I am working day and night since starting of this project, may upload timelapse in future  
+I have learned a lot through this 5 day project challenge,
+this is fun !
