@@ -1,0 +1,64 @@
+my choice of stack would be this:-
+
+frontend:-
+html, css, js
+possibly will use no code low code platforms like,
+Framer, Wordpress or some other platforms
+
+backend:-
+will use Flask (Python)
+
+Database:-
+will use SQL
+
+My Idea:- 
+Connect chefs with investors / business minded people 
+
+how will I implement?
+
+Homepage:- Intro, chef login/signup, investor login/signup
+
+loginpage:- login
+signuppage:- signup
+
+Browsepage:- chefs listings from all around the world
+    options of purchasing the chef for salaray,
+    or investing in its hotel or chef business
+
+chef dashboard:-
+    change password, delete listing/account, invested (y/n)
+
+investor dashboard:-
+    delete account, change password
+    how many chefs the investor own or have invested in
+
+user table:- id, username, hash
+
+chef table:- username, status, intro, wage, exp, mail
+
+investor table:- username, chef-username
+
+CREATE TABLE chef (
+   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+   status BOOL,
+   intro TEXT,
+   wage INTEGER,
+   exp INTEGER,
+   mail TEXT
+);
+
+CREATE TABLE investor (
+   username TEXT NOT NULL,
+   chefusername TEXT NOT NULL
+);
+
+CREATE TABLE users (
+   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+   username TEXT NOT NULL,
+   type BOOL NOT NULL,
+   hash TEXT NOT NULL
+);
+
+to add,
+-profile button on browese and then show respective profiles
+-search option in browse tab
