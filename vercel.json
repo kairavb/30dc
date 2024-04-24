@@ -1,4 +1,5 @@
 {
+	"engines": {"node": "18.x"},
     "builds": [
         {"src":"app.py", "use":"@vercel/python", "config": { "maxLambdaSize": "15mb", "runtime": "python3.8" }}
     ],
