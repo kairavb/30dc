@@ -1,7 +1,6 @@
 from cs50 import SQL
 from waitress import serve
 from flask import Flask, redirect, render_template, request, session
-from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 from re import match
@@ -15,8 +14,7 @@ app = Flask(__name__)
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+app.secret_key = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
 # mail regex
 pattern = r"[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}"
@@ -154,6 +152,7 @@ def profile():
         except KeyError:
             usrid = 'browse'
         db.execute("UPDATE investor SET contacted = contacted + 1 WHERE id = ?", usrid)
+        return redirect("/dashboard")
     
     else:
         profileid = request.args.get("profile", None)
