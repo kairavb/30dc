@@ -1,8 +1,12 @@
 # 30dc
 30 days challenge one !
 
-#### frontend template by:- https://github.com/estevanmaito/windmill-dashboard  
-#### founded on https://www.tailwindawesome.com/  
+frontend template by:- https://github.com/estevanmaito/windmill-dashboard  
+founded on https://www.tailwindawesome.com/  
+license inside license folder with name of LICENSE1  
+
+landing page template by:- https://github.com/themesberg/landwind  
+license inside license folder with name of LICENSE2  
 
 ## read requirements.txt for python package requirements
 
