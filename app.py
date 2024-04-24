@@ -1,5 +1,6 @@
 from cs50 import SQL
-from flask import json, Flask, flash, redirect, render_template, request, session
+from waitress import serve
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
@@ -259,3 +260,6 @@ def logout():
     
     session.clear()
     return redirect("/")
+
+if __name__ == "__main__":
+    serve(app, host="0.0.0.0", port=5000)
