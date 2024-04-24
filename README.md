@@ -48,10 +48,11 @@ and over time how I imagined the layout of my project,
 like a blueprint that changes as the idea is shaped by continuous efforts over time.
 
 also created virtual env so that i can isolate my working environment 
-from my global environment.
+from my global environment. (Linux)
 
 ```
 python3.10 -m venv "chefenv"
+source chefenv/bin/activate
 ```
 
 I am working day and night since starting of this project, may upload timelapse in future  
