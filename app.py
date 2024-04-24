@@ -54,6 +54,9 @@ def apology(message, code=400):
         return s
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
+@app.errorhandler(404)
+def notfound(e):
+    return apology("are you lost my friend?", 404)
 
 @app.route("/")
 def index():
