@@ -40,16 +40,20 @@ investor table:- username, chef-username
 
 CREATE TABLE chef (
    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-   status BOOL,
+   status TEXT,
    intro TEXT,
    wage INTEGER,
    exp INTEGER,
-   mail TEXT
+   mail TEXT,
+   views INTEGER
 );
 
 CREATE TABLE investor (
-   username TEXT NOT NULL,
-   chefusername TEXT NOT NULL
+   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+   viewed INTEGER,
+   contacted INTEGER,
+   tohire INTEGER,
+   balance INTEGER
 );
 
 CREATE TABLE users (
@@ -59,6 +63,22 @@ CREATE TABLE users (
    hash TEXT NOT NULL
 );
 
-to add,
+did on 23-24 apr:
 -profile button on browese and then show respective profiles
+-status update
 -search option in browse tab
+-investor dashboard
+-view count on investor dashboard
+-few fail safe's
+
+did on 24-25 apr:
+-testing
+-homepage, with buttons of,
+dashboard, login, signup
+-aplogy redesign
+-chef profile visits counter
+-deploy online
+
+now only not so important 
+features remain, 
+the project is complete!

@@ -146,7 +146,7 @@
         <div class="py-4 text-gray-500 dark:text-gray-400">
           <a
             class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
-            href="index"
+            href="/"
           >
             Chef Connect
           </a>
@@ -313,33 +313,61 @@
           <!-- Remove everything INSIDE this div to a really blank page -->
           <div class="container px-6 mx-auto grid">
             <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-              Username
+              <span class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
+                {{ userid }}
+              </span>
             </h2>
             <div class="min-w-0 p-4 text-white bg-purple-600 rounded-lg shadow-xs">
               <h4 class="mb-4 font-semibold">
-                Colored card
+                Why to hire me?
               </h4>
               <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Fuga, cum commodi a omnis numquam quod? Totam exercitationem
-                quos hic ipsam at qui cum numquam, sed amet ratione! Ratione,
-                nihil dolorum.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, quidem corporis voluptatibus ipsam enim error repudiandae animi quas officia deleniti voluptatum adipisci commodi repellendus nesciunt omnis reprehenderit quae fugit possimus?
+                {{ query[0]['intro'] }}
               </p>
             </div>
             <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-              Requested Minimum Wage -> 5000
+              <span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700">
+                Status ->
+              </span>
+              <span
+              class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
+            >
+            {{ query[0]['status'] }}
+            </span>
             </h2>
             <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-              Email -> abc@gmail.com
+              <span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700">
+                Money Requested -> 
+              </span>
+              <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                {{ query[0]['wage'] }}
+              </span>
             </h2>
             <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-              Experience -> 5 years
+              <span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700">
+                Email -> 
+              </span>
+              <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                {{ query[0]['mail'] }}
+              </span>
+            </h2>
+            <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+              <span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700">
+                Experience -> 
+              </span>
+              <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                {{ query[0]['exp'] }} years
+              </span>
             </h2>
             <div>
-              <button class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                Hire !
+            <form action="/profile", method="post">
+              <input type="hidden" name="id" value="{{ userid }}">
+              <a href="mailto:{{ query[0]['mail'] }}?&subject=Work Inquiry&body=Hey I found your profile through Chef Connect!" target="_top">
+              <button type="submit" class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                Contact Me
               </button>
+              </a>
+            </form>
             </div>
           </div>
         </main>
