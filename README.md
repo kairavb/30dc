@@ -1,5 +1,6 @@
-# 30dc
-30 days challenge one !
+# chef connect
+this project was created as part of 30dc challenge #1,  
+that was to create and deploy a working full-stack project in 5 days!!
 
 frontend template by:- https://github.com/estevanmaito/windmill-dashboard  
 founded on https://www.tailwindawesome.com/  
