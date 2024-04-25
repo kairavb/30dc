@@ -1,4 +1,4 @@
-from cs50 import SQL
+import mysql.connector
 from waitress import serve
 from flask import Flask, redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -7,7 +7,14 @@ from re import match
 
 
 # Connecting to sqlite
-db = SQL("sqlite:///chef.db")
+conn = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="Abc#0000",
+  database="chef"
+)
+conn.autocommit = True
+db = conn.cursor(dictionary=True)
 
 # Configure application
 app = Flask(__name__)
@@ -76,8 +83,8 @@ def login():
         elif not pas:
             return apology("must provide password", 403)
 
-        rows = db.execute("SELECT * FROM users WHERE username = ?", usr)
-
+        db.execute("SELECT * FROM users WHERE username = %s", (usr,))
+        rows = db.fetchall()
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], pas
@@ -116,8 +123,8 @@ def register():
         
         has = generate_password_hash(pas, method='pbkdf2', salt_length=16)
         try:
-            db.execute("INSERT INTO users (username, type, hash) VALUES(?, ?, ?)", usr, typ, has)
-        except ValueError:
+            db.execute("INSERT INTO users (username, type, hash) VALUES(%s, %s, %s)", (usr, typ, has))
+        except mysql.connector.Error:
             return apology("username already taken !")
 
         return redirect("/login")
@@ -128,14 +135,16 @@ def register():
 
 @app.route("/browse")
 def browse():
-    query = db.execute("SELECT * FROM chef")
+    db.execute("SELECT * FROM chef")
+    query = db.fetchall()
     length = len(query)
     try:
         usrid = session['user_id']
     except KeyError:
         usrid = 'browse'
     users = [query[i]['id'] for i in range(length)]
-    user = db.execute("SELECT * FROM users WHERE id IN (?)", users)
+    db.execute("SELECT * FROM users WHERE id IN (%s)", tuple(users))
+    user = db.fetchall()
     usernames = [] 
     userids = []
     for i in range(length):
@@ -151,20 +160,22 @@ def profile():
             usrid = session['user_id']
         except KeyError:
             usrid = 'browse'
-        db.execute("UPDATE investor SET contacted = contacted + 1 WHERE id = ?", usrid)
+        db.execute("UPDATE investor SET contacted = contacted + 1 WHERE id = %s", (usrid,))
         return redirect("/dashboard")
     
     else:
         profileid = request.args.get("profile", None)
         invid = request.args.get("id")
         if not invid == 'browse':
-            db.execute("UPDATE investor SET viewed = viewed + 1 WHERE id = ?", invid)
+            db.execute("UPDATE investor SET viewed = viewed + 1 WHERE id = %s", (invid,))
         if profileid == None:
             return redirect("/")
         else:
-            rows = db.execute("SELECT * FROM users WHERE username = ?", profileid)
-            db.execute("UPDATE chef SET views = views + 1 WHERE id = ?", rows[0]['id'])
-            query = db.execute("SELECT * FROM chef WHERE id = ?", rows[0]['id'])
+            db.execute("SELECT * FROM users WHERE username = %s", (profileid,))
+            rows = db.fetchall()
+            db.execute("UPDATE chef SET views = views + 1 WHERE id = %s", (rows[0]['id'],))
+            db.execute("SELECT * FROM chef WHERE id = %s", (rows[0]['id'],))
+            query = db.fetchall()
             return render_template("profile.html", query=query, userid=profileid)
 
 
@@ -173,7 +184,8 @@ def profile():
 def dashboard():
     if request.method == "POST":
         usrid = session["user_id"]
-        rows = db.execute("SELECT * FROM users WHERE id = ?", usrid)
+        db.execute("SELECT * FROM users WHERE id = %s", (usrid,))
+        rows = db.fetchall()
         if rows[0]['type'] == 1:
             intro = request.form.get("introduction")
             wage = request.form.get("wage")
@@ -186,7 +198,7 @@ def dashboard():
             elif len(sts) > 22:
                 return apology("You have exceeded the maximum length of status", 400)
             
-            db.execute("UPDATE chef SET status = ?, intro = ?, wage = ?, exp = ?, mail = ? WHERE id = ?", sts, intro, wage, exp, mail, usrid)
+            db.execute("UPDATE chef SET status = %s, intro = %s, wage = %s, exp = %s, mail = %s WHERE id = %s", (sts, intro, wage, exp, mail, usrid))
 
             return redirect("/dashboard")
         else:
@@ -202,27 +214,30 @@ def dashboard():
             if int(thr) < 0 or int(bal) < 0:
                 return apology("enter a valid amount", 400)
             
-            db.execute("UPDATE investor SET balance = ?, tohire = ? WHERE id = ?", bal, thr, usrid)
+            db.execute("UPDATE investor SET balance = %s, tohire = %s WHERE id = %s", (bal, thr, usrid))
 
             return redirect("/dashboard")
 
     else:
         usrid = session["user_id"]
-        rows = db.execute("SELECT * FROM users WHERE id = ?", usrid)
+        db.execute("SELECT * FROM users WHERE id = %s", (usrid,))
+        rows = db.fetchall()
         try:
             if rows[0]['type'] == 1:
                 try:
-                    db.execute("INSERT INTO chef VALUES(?, ?, ?, ?, ?, ?, ?)", usrid, 'Unemployed', 'Hello!', 0, 0, 'Empty', 0)
-                except ValueError:
+                    db.execute("INSERT INTO chef VALUES(%s, %s, %s, %s, %s, %s, %s)", (usrid, 'Unemployed', 'Hello!', 0, 0, 'Empty', 0))
+                except mysql.connector.Error:
                     pass
-                query = db.execute("SELECT * FROM chef WHERE id = ?", usrid)
+                db.execute("SELECT * FROM chef WHERE id = %s", (usrid,))
+                query = db.fetchall()
                 return render_template("chef.html", query=query)
             else:
                 try:
-                    db.execute("INSERT INTO investor VALUES(?, ?, ?, ?, ?)", usrid, 0, 0, 0, 0)
-                except ValueError:
+                    db.execute("INSERT INTO investor VALUES(%s, %s, %s, %s, %s)", (usrid, 0, 0, 0, 0))
+                except mysql.connector.Error:
                     pass
-                query = db.execute("SELECT * FROM investor WHERE id = ?", usrid)
+                db.execute("SELECT * FROM investor WHERE id = %s", (usrid,))
+                query = db.fetchall()
                 return render_template("investor.html", query=query)
         except IndexError:
             return apology("Server error, delete existing sessions!", 500)
@@ -245,7 +260,7 @@ def change():
             return apology("passwords do not match!", 403)
 
         has = generate_password_hash(pas, method='pbkdf2', salt_length=16)
-        db.execute("UPDATE users SET hash = ? WHERE id = ?", has, usrid)
+        db.execute("UPDATE users SET hash = %s WHERE id = %s", (has, usrid))
         session.clear()
         return redirect("/login")
     else:

@@ -63,6 +63,39 @@ CREATE TABLE users (
    hash TEXT NOT NULL
 );
 
+// above is for sqlite, below is for MYSQL
+// I am soo good in making bad decisions that I,
+// choose sqlite for project dev, but when deploying I
+// remembered that i have to deploy on a server that
+// does not support sqlite, so i am using mysql now.
+// writing app.py again, because I love torture.
+
+CREATE TABLE chef (
+   id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+   status VARCHAR(22),
+   intro VARCHAR(255),
+   wage INT,
+   exp INT,
+   mail VARCHAR(255),
+   views INT
+);
+
+CREATE TABLE investor (
+   id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+   viewed INT,
+   contacted INT,
+   tohire INT,
+   balance INT
+);
+
+CREATE TABLE users (
+   id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+   username VARCHAR(255) NOT NULL,
+   type BOOL NOT NULL,
+   hash VARCHAR(255) NOT NULL,
+   UNIQUE (username)
+);
+
 did on 23-24 apr:
 -profile button on browese and then show respective profiles
 -status update
