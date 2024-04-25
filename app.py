@@ -6,17 +6,40 @@ from functools import wraps
 from re import match
 
 
-# Connecting to sqlite
-conn = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="Abc#0000",
-  database="chef"
-)
-conn.autocommit = True
-db = conn.cursor(dictionary=True)
+# Connecting to mysql
+class DB:
+    conn = None
 
-# Configure application
+    def connect(self):
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="Abc#0000",
+            database="chef",
+            autocommit = True
+            )
+
+    def execute(self, sql, arg=None):
+        try:
+            cursor = self.conn.cursor(dictionary=True)
+            if arg == None:
+                cursor.execute(sql)
+            else:
+                cursor.execute(sql, arg)
+        except (AttributeError, mysql.connector.OperationalError):
+            self.connect()
+            cursor = self.conn.cursor(dictionary=True)
+            if arg == None:
+                cursor.execute(sql)
+            else:
+                cursor.execute(sql, arg)
+        return cursor.fetchall()
+
+
+db = DB()
+
+# Configure application Create a free Team
+
 app = Flask(__name__)
 
 # Configure session to use filesystem (instead of signed cookies)
@@ -83,8 +106,7 @@ def login():
         elif not pas:
             return apology("must provide password", 403)
 
-        db.execute("SELECT * FROM users WHERE username = %s", (usr,))
-        rows = db.fetchall()
+        rows = db.execute("SELECT * FROM users WHERE username = %s", (usr,))
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], pas
@@ -135,16 +157,17 @@ def register():
 
 @app.route("/browse")
 def browse():
-    db.execute("SELECT * FROM chef")
-    query = db.fetchall()
+    query = db.execute("SELECT * FROM chef")
     length = len(query)
     try:
         usrid = session['user_id']
     except KeyError:
         usrid = 'browse'
     users = [query[i]['id'] for i in range(length)]
-    db.execute("SELECT * FROM users WHERE id IN (%s)", tuple(users))
-    user = db.fetchall()
+    if len(users) == 0:
+        user = []
+    else:
+        user = db.execute("SELECT * FROM users WHERE id IN (%s)", tuple(users))
     usernames = [] 
     userids = []
     for i in range(length):
@@ -171,11 +194,9 @@ def profile():
         if profileid == None:
             return redirect("/")
         else:
-            db.execute("SELECT * FROM users WHERE username = %s", (profileid,))
-            rows = db.fetchall()
+            rows = db.execute("SELECT * FROM users WHERE username = %s", (profileid,))
             db.execute("UPDATE chef SET views = views + 1 WHERE id = %s", (rows[0]['id'],))
-            db.execute("SELECT * FROM chef WHERE id = %s", (rows[0]['id'],))
-            query = db.fetchall()
+            query = db.execute("SELECT * FROM chef WHERE id = %s", (rows[0]['id'],))
             return render_template("profile.html", query=query, userid=profileid)
 
 
@@ -184,8 +205,7 @@ def profile():
 def dashboard():
     if request.method == "POST":
         usrid = session["user_id"]
-        db.execute("SELECT * FROM users WHERE id = %s", (usrid,))
-        rows = db.fetchall()
+        rows = db.execute("SELECT * FROM users WHERE id = %s", (usrid,))
         if rows[0]['type'] == 1:
             intro = request.form.get("introduction")
             wage = request.form.get("wage")
@@ -220,24 +240,21 @@ def dashboard():
 
     else:
         usrid = session["user_id"]
-        db.execute("SELECT * FROM users WHERE id = %s", (usrid,))
-        rows = db.fetchall()
+        rows = db.execute("SELECT * FROM users WHERE id = %s", (usrid,))
         try:
             if rows[0]['type'] == 1:
                 try:
                     db.execute("INSERT INTO chef VALUES(%s, %s, %s, %s, %s, %s, %s)", (usrid, 'Unemployed', 'Hello!', 0, 0, 'Empty', 0))
                 except mysql.connector.Error:
                     pass
-                db.execute("SELECT * FROM chef WHERE id = %s", (usrid,))
-                query = db.fetchall()
+                query = db.execute("SELECT * FROM chef WHERE id = %s", (usrid,))
                 return render_template("chef.html", query=query)
             else:
                 try:
                     db.execute("INSERT INTO investor VALUES(%s, %s, %s, %s, %s)", (usrid, 0, 0, 0, 0))
                 except mysql.connector.Error:
                     pass
-                db.execute("SELECT * FROM investor WHERE id = %s", (usrid,))
-                query = db.fetchall()
+                query = db.execute("SELECT * FROM investor WHERE id = %s", (usrid,))
                 return render_template("investor.html", query=query)
         except IndexError:
             return apology("Server error, delete existing sessions!", 500)
