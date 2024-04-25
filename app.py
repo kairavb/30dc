@@ -38,11 +38,10 @@ class DB:
 
 db = DB()
 
-# Configure application Create a free Team
-
+# Configure application
 app = Flask(__name__)
 
-# Configure session to use filesystem (instead of signed cookies)
+# Configure session
 app.config["SESSION_PERMANENT"] = False
 app.secret_key = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
@@ -164,10 +163,10 @@ def browse():
     except KeyError:
         usrid = 'browse'
     users = [query[i]['id'] for i in range(length)]
-    if len(users) == 0:
-        user = []
-    else:
-        user = db.execute("SELECT * FROM users WHERE id IN (%s)", tuple(users))
+    user = []
+    for i in users:
+        k = db.execute("SELECT * FROM users WHERE id = %s", (i,))
+        user.append(k[0])
     usernames = [] 
     userids = []
     for i in range(length):
